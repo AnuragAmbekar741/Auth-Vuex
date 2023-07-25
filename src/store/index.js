@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 
 //firebase imports
 import {auth} from '../Config/config'
-import {createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from 'firebase/auth'
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'firebase/auth'
 
 // const store = createStore({
 //   state: {
@@ -17,12 +17,16 @@ import {createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from 
 
 const store = createStore({
   state:{
-    user:null
+    user:null,
+    authIsReady:false
   },
   mutations:{
     setUser(state, payload){
       state.user = payload 
       console.log('user state changed', state.user)
+    },
+    setAuthIsReady(state,payload){
+      state.authIsReady = payload
     }
   },
   actions:{
@@ -50,12 +54,18 @@ const store = createStore({
 
     async logout(context){
       console.log('logout action')
-      
+
       await signOut(auth)
       context.commit('setUser',null)
     }
 
   }
+})
+
+const unsub = onAuthStateChanged(auth,(user)=>{
+  if (user) store.commit('setAuthIsReady',true)
+  store.commit('setUser', user)
+  unsub()
 })
 
 // export the store
