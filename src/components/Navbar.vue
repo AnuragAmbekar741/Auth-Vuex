@@ -1,8 +1,7 @@
 <template>
   <nav>
       <h1>Vuex Auth</h1>
-      <h2>{{ authIsReady }}</h2>
-      <template v-if="authIsReady">
+      <template v-if="user">
         <!-- for all users -->
         <div>
           <router-link to="/">Home</router-link>
@@ -13,11 +12,12 @@
           <button @click="handleClick">Logout</button>
         </div>
         <!-- for logged out users -->
-        <div>
+        
+    </template>
+    <div v-if="!user">
           <router-link to="/login">Login</router-link>
           <router-link to="/signup">Signup</router-link>
         </div>
-    </template>
   </nav>
 </template>
 
@@ -33,7 +33,7 @@ export default {
 
     const handleClick = () =>{
       store.dispatch('logout')
-      router.push('/login')
+      router.push('/')
     }
 
 
